@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Azure AI Document Intelligence - Text Extraction</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+      .output-container {
+        margin-top: 20px;
+      }
+      .spinner-border-container {
+        display: none; /* Initially hide the spinner */
+      }
+      /* Custom styles for header and footer */
+      header {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 0;
+      }
+      footer {
+        background-color: #f8f9fa;
+        padding: 10px 0;
+        margin-top: auto; /* Sticky footer */
+      }
+      .student-info {
+        background-color: #f0f0f0;
+        padding: 10px;
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <div class="container">
+        <h1 class="text-center">Azure AI Document Intelligence - Simple Text Extraction</h1>
+        <p class="text-center">
+          Prakasam Venkatachalam | ITIS 6177 - System Integration |<a class="text-center text-white" href="mailto:pvenkat6@uncc.edu"> Email to Prakasam </a> | <a class="text-center text-white" href="https://github.com/prakasamv-uncc/ITIS-6177-AI-txt-extract-final-project" target="_blank">GitHub Repository</a> |  <a class="text-center text-white" href="http://159.65.246.42:3000/api-docs/" target="_blank">Swagger (API Documentation)</a>
+        </p>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="row mt-4">
+        <!-- Upload Document Section -->
+        <div class="col-md-6">
+          <form id="uploadForm" enctype="multipart/form-data">
+            <div class="form-group">
+              <label for="fileInput">Upload Document (.jpg, .jpeg, .png, .pdf):</label>
+              <input
+                type="file"
+                class="form-control-file"
+                id="fileInput"
+                accept=".jpg, .jpeg, .png, .pdf"
+              />
+            </div>
+            <button type="submit" class="btn btn-primary">Extract Text</button>
+          </form>
+          <!-- Spinner -->
+
+          <div class="spinner-border-container" style="margin-top: 10px">
+            <div class="spinner-border text-success" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </div>
+
+          <div
+            class="output-container mt-4"
+            id="outputContainer"
+            style="display: none"
+          >
+            <h3>Extracted Text:</h3>
+            <pre id="outputText" style="white-space: pre-wrap;"></pre>></pre>
+          </div>
+        </div>
+        <!-- Student Information Section -->
+
+        <div class="col-md-6">
+          <div class="student-info">
+            <h3>Student Information</h3>
+            <p><strong>Student Name:</strong> Prakasam Venkatachalam</p>
+            <p><strong>Student ID:</strong> 801166636</p>
+            <p><strong>Course:</strong> ITIS 6177 - System Integration</p>
+            <p><strong>Email:</strong> <a href="mailto:pvenkat6@uncc.edu"> @Prakasam</a></p>
+            <p><strong>GitHub Repository:</strong> <a href="https://github.com/prakasamv-uncc/ITIS-6177-AI-txt-extract-final-project" target="_blank">GitHub Repository</a></p>
+            <p><strong>Swagger (API Documentation):</strong> <a href="http://159.65.246.42:3000/api-docs/" target="_blank">Swagger (API Documentation)</a></p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container footer fixed-bottom" >
+        <p class="text-center">
+          Copyright © 2024 Prakasam Venkatachalam for Azure AI Document Intelligence - Simple Text Extraction. 
+          reserved.
+        </p>
+      </div>
+    </footer>
+
+    <!-- Bootstrap JS and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+      document
+        .getElementById("uploadForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault(); // Prevent default form submission
+
+          // Get the file input element
+          const fileInput = document.getElementById("fileInput");
+          const file = fileInput.files[0];
+
+          if (!file) {
+            alert("Please select a file.");
+            return;
+          }
+
+          // Show spinner
+          document.querySelector(".spinner-border-container").style.display =
+            "block";
+
+          // Create FormData object and append the file
+          const formData = new FormData();
+          formData.append("file", file);
+
+          // Send a POST request to server (Replace with your server endpoint)
+          fetch("/extractText", {
+            method: "POST",
+            body: formData,
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              // Hide spinner
+              document.querySelector(
+                ".spinner-border-container"
+              ).style.display = "none";
+
+              // Display extracted text on the page
+              document.getElementById("outputText").textContent =
+                JSON.stringify(data, null, 2);
+              document.getElementById("outputContainer").style.display =
+                "block";
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              alert("An error occurred. Please try again.");
+              // Hide spinner in case of error
+              document.querySelector(
+                ".spinner-border-container"
+              ).style.display = "none";
+            });
+        });
+    </script>
+  </body>
+</html>
